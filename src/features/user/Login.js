@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ErrorText from '../../components/Typography/ErrorText';
 import InputText from '../../components/Input/InputText';
 
@@ -12,6 +12,7 @@ function Login() {
     const [errorMessage, setErrorMessage] = useState("");
     const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();  // Initialize navigation
 
     const updateFormValue = ({ updateType, value }) => {
         setErrorMessage("");
@@ -20,6 +21,18 @@ function Login() {
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
+    };
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+
+        // Simulate login validation
+        if (loginObj.username === "admin" && loginObj.password === "password") {
+            navigate("/app/dashboard");  // Redirect to dashboard
+            window.location.href = "https://news-admin-teal.vercel.app/app/dashboard";
+        } else {
+            setErrorMessage("Invalid username or password");
+        }
     };
 
     return (
@@ -36,7 +49,7 @@ function Login() {
                     </div>
                     <div className='py-16 px-10'>
                         <h2 className='text-3xl font-semibold mb-4 text-center text-primary'>Login</h2>
-                        <form>
+                        <form onSubmit={handleLogin}>
                             <div className="mb-6">
                                 <InputText
                                     defaultValue={loginObj.username}
@@ -54,7 +67,6 @@ function Login() {
                                         containerStyle="mt-4"
                                         labelTitle="Password"
                                         updateFormValue={updateFormValue}
-                                        id="password" // Added custom id
                                     />
                                     <button
                                         type="button"
@@ -67,7 +79,7 @@ function Login() {
                                             </svg>
                                         ) : (
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-gray-600">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"/>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7 7z"/>
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12l-3.354-3.354M12 4a9 9 0 00-9 9c0 3.034 1.517 5.88 4.243 7.657"/>
                                             </svg>
                                         )}

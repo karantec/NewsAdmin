@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import LandingIntro from './LandingIntro';
+import { Link } from 'react-router-dom';
 import ErrorText from '../../components/Typography/ErrorText';
 import InputText from '../../components/Input/InputText';
 
@@ -10,53 +9,9 @@ function Login() {
         password: ""
     };
 
-    const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [loginObj, setLoginObj] = useState(INITIAL_LOGIN_OBJ);
     const [showPassword, setShowPassword] = useState(false);
-    const navigate = useNavigate();
-
-    // Get the base_url from environment variable
-    const loginApiUrl = `${process.env.REACT_APP_BASE_URL}/super-admin/auth/login`;
-
-    const submitForm = async (e) => {
-        e.preventDefault();
-        setErrorMessage("");
-        
-        const { username, password } = loginObj;
-
-        // Basic validation
-        if (username.trim() === "") return setErrorMessage("Username is required!");
-        if (password.trim() === "") return setErrorMessage("Password is required!");
-
-        setLoading(true);
-        
-        try {
-            // API call to authenticate the user
-            const response = await fetch(loginApiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email: username, password: password }), // Modify if required by API
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Save the token in localStorage
-                localStorage.setItem("token", data.data._token);
-                // Navigate to the dashboard after successful login
-                navigate('/app/welcome');
-            } else {
-                setErrorMessage(data.message || "An error occurred during login.");
-            }
-        } catch (error) {
-            setErrorMessage("Network error. Please try again later.");
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const updateFormValue = ({ updateType, value }) => {
         setErrorMessage("");
@@ -81,7 +36,7 @@ function Login() {
                     </div>
                     <div className='py-16 px-10'>
                         <h2 className='text-3xl font-semibold mb-4 text-center text-primary'>Login</h2>
-                        <form onSubmit={submitForm}>
+                        <form>
                             <div className="mb-6">
                                 <InputText
                                     defaultValue={loginObj.username}
@@ -99,6 +54,7 @@ function Login() {
                                         containerStyle="mt-4"
                                         labelTitle="Password"
                                         updateFormValue={updateFormValue}
+                                        id="password" // Added custom id
                                     />
                                     <button
                                         type="button"
@@ -106,40 +62,13 @@ function Login() {
                                         onClick={togglePasswordVisibility}
                                     >
                                         {showPassword ? (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                className="w-6 h-6 text-gray-600"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"
-                                                />
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-gray-600">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"/>
                                             </svg>
                                         ) : (
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                                className="w-6 h-6 text-gray-600"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"
-                                                />
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M15 12l-3.354-3.354M12 4a9 9 0 00-9 9c0 3.034 1.517 5.88 4.243 7.657"
-                                                />
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-6 h-6 text-gray-600">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12c0 3.866-3.134 7-7 7s-7-3.134-7-7 3.134-7 7-7 7 3.134 7 7z"/>
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12l-3.354-3.354M12 4a9 9 0 00-9 9c0 3.034 1.517 5.88 4.243 7.657"/>
                                             </svg>
                                         )}
                                     </button>
@@ -153,8 +82,7 @@ function Login() {
                             </div>
 
                             <ErrorText styleClass="mt-6">{errorMessage}</ErrorText>
-                            <button type="submit" className={"btn mt-6 w-full bg-orange-500 text-white" + (loading ? " loading" : "")}>Login</button>
-
+                            <button type="submit" className="btn mt-6 w-full bg-orange-500 text-white">Login</button>
                         </form>
                     </div>
                 </div>

@@ -13,7 +13,7 @@ function InternalPage(){
           <div className="hero-content">
               <div className="max-w-md">
                   <TemplatePointers />
-                  <button className="btn bg-base-100 btn-outline">Welcome to the Dashboard</button>
+                  <button className="btn bg-base-100 btn-outline">Welcome to the Nation</button>
               </div>
           </div>
       </div>

@@ -1,16 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { FiSearch } from 'react-icons/fi';
 
-const DashboardMetric = ({ title, value, data }) => {
+const DashboardMetric = ({ title, data }) => {
   return (
     <div className="bg-white rounded-2xl shadow-md p-4">
       <h3 className="text-sm font-medium text-gray-500 mb-2">{title}</h3>
-      <p className="text-2xl font-bold mb-4">{value}</p>
-      <ResponsiveContainer width="100%" height={60}>
+      <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
-          <XAxis dataKey="name" hide />
-          <YAxis hide />
+          <XAxis dataKey="name" />
+          <YAxis />
           <Tooltip />
           <Line type="monotone" dataKey="value" stroke="#2563eb" strokeWidth={2} dot={false} />
         </LineChart>
@@ -19,36 +18,87 @@ const DashboardMetric = ({ title, value, data }) => {
   );
 };
 
+const CategoryCard = ({ category, count }) => (
+  <div className="bg-white p-4 shadow-md rounded-2xl flex justify-between items-center">
+    <span className="text-lg font-semibold text-gray-700">{category}</span>
+    <span className="text-xl font-bold text-blue-600">{count}</span>
+  </div>
+);
+
 const Dashboard = () => {
-  const metricsData = {
-    registeredClients: [
-      { name: 'Mon', value: 20 },
-      { name: 'Tue', value: 40 },
-      { name: 'Wed', value: 30 },
-      { name: 'Thu', value: 50 },
-      { name: 'Fri', value: 35 }
-    ],
-    companyP: [
-      { name: 'Mon', value: 15 },
-      { name: 'Tue', value: 25 },
-      { name: 'Wed', value: 20 },
-      { name: 'Thu', value: 35 },
-      { name: 'Fri', value: 30 }
-    ],
-    unusedClients: [
-      { name: 'Mon', value: 25 },
-      { name: 'Tue', value: 35 },
-      { name: 'Wed', value: 30 },
-      { name: 'Thu', value: 45 },
-      { name: 'Fri', value: 20 }
-    ],
-    assetsRelated: [
-      { name: 'Mon', value: 10 },
-      { name: 'Tue', value: 18 },
-      { name: 'Wed', value: 22 },
-      { name: 'Thu', value: 25 },
-      { name: 'Fri', value: 30 }
-    ]
+  const [metricsData, setMetricsData] = useState({
+    newsCategories: {},
+    blogCategories: {},
+    podcastCategories: {},
+  });
+
+  useEffect(() => {
+    const newCategoryName = "नया श्रेणी";
+    const newCategoryCount = 13;
+    
+    const newsCounts = {
+      अंतरराष्ट्रीय: 10,
+      राष्ट्रीय: 5,
+      राज्य: 3,
+      राजनीति: 7,
+      शिक्षा: 4,
+      रोजगार: 8,
+      पर्यटन: 6,
+      खेल: 12,
+      मौसम: 2,
+      जायका: 9,
+      स्वास्थ्य: 11,
+      व्यापार: 6,
+      भारत: 13,
+      [newCategoryName]: newCategoryCount,
+    };
+
+    const blogCounts = {
+      अंतरराष्ट्रीय: 8,
+      राष्ट्रीय: 4,
+      राज्य: 2,
+      राजनीति: 5,
+      शिक्षा: 3,
+      रोजगार: 6,
+      पर्यटन: 4,
+      खेल: 7,
+      मौसम: 2,
+      जायका: 5,
+      स्वास्थ्य: 6,
+      व्यापार: 4,
+      भारत: 10,
+      [newCategoryName]: newCategoryCount,
+    };
+
+    const podcastCounts = {
+      अंतरराष्ट्रीय: 6,
+      राष्ट्रीय: 3,
+      राज्य: 4,
+      राजनीति: 5,
+      शिक्षा: 2,
+      रोजगार: 7,
+      पर्यटन: 3,
+      खेल: 9,
+      मौसम: 1,
+      जायका: 4,
+      स्वास्थ्य: 5,
+      व्यापार: 3,
+      भारत: 8,
+      [newCategoryName]: newCategoryCount,
+    };
+
+    setMetricsData({
+      newsCategories: newsCounts,
+      blogCategories: blogCounts,
+      podcastCategories: podcastCounts,
+    });
+  }, []);
+
+  const createChartData = (categoryCounts) => {
+    return Object.entries(categoryCounts).map(([category, count]) => ({
+      name: category,
+      value: count,
+    }));
   };
 
   return (
@@ -65,51 +115,28 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      {/* Graphs Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
         <DashboardMetric 
-          title="Total Registered Clients" 
-          value="10" 
-          data={metricsData.registeredClients} 
+          title="News Categories Count" 
+          data={createChartData(metricsData.newsCategories)} 
         />
         <DashboardMetric 
-          title="Total Company P" 
-          value="₹2,50,000" 
-          data={metricsData.companyP} 
+          title="Blog Categories Count" 
+          data={createChartData(metricsData.blogCategories)} 
         />
         <DashboardMetric 
-          title="Total Unused Registered Client" 
-          value="5" 
-          data={metricsData.unusedClients} 
-        />
-        <DashboardMetric 
-          title="Total Assets Related" 
-          value="₹5,00,000" 
-          data={metricsData.assetsRelated} 
+          title="Podcast Categories Count" 
+          data={createChartData(metricsData.podcastCategories)} 
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="bg-white p-4 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Calendar</h3>
-          {/* Calendar component would go here */}
-        </div>
-        
-        <div className="bg-white p-4 rounded-2xl shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Common Registration Form</h3>
-          {/* Registration form component would go here */}
-        </div>
-        
-        <div className="bg-white p-4 rounded-2xl shadow-md">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-semibold">Recent Activities</h3>
-            <div className="flex gap-2">
-              <button className="px-3 py-1 rounded-lg bg-blue-100 text-blue-600">Daily</button>
-              <button className="px-3 py-1 rounded-lg bg-gray-100">Weekly</button>
-              <button className="px-3 py-1 rounded-lg bg-gray-100">Monthly</button>
-            </div>
-          </div>
-          {/* Activity list would go here */}
-        </div>
+      {/* Cards Section */}
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">Category Post Counts</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Object.entries(metricsData.newsCategories).map(([category, count]) => (
+          <CategoryCard key={category} category={category} count={count} />
+        ))}
       </div>
     </div>
   );

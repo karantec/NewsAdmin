@@ -13,6 +13,15 @@
     z-index: 1000;
   }
   
+  .ql-container {
+    @apply h-[calc(100%-42px)] !important; /* 42px accounts for toolbar height */
+  }
+  
+  .ql-editor {
+    @apply h-full !important;
+    @apply min-h-[200px] !important;
+    @apply overflow-y-auto !important;
+  }
   .loading-indicator:after {
     content: ' ';
     position: fixed;

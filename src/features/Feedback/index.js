@@ -1,259 +1,158 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import TitleCard from "../../components/Cards/TitleCard";
-import InputText from "../../components/Input/InputText";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import axios from "axios";
 
 function FeedbackForm() {
   const [formData, setFormData] = useState({
     title: "",
-    content: "",
-    category: "",
-    video: null,
-    publishDate: new Date().toISOString().slice(0, 16), // Default to current date-time
+    description: "",
+    author: "",
+    thumbnail: "",
+    videoUrl: "",
   });
 
-  const [podcasts, setPodcasts] = useState([
-    {
-      title: "Tech Talks",
-      category: "Technology",
-      publishDate: "2025-02-01T10:00",
-      video: "tech_video.mp4",
-    },
-    {
-      title: "Health Insights",
-      category: "Health",
-      publishDate: "2025-02-02T15:00",
-      video: "health_video.mp4",
-    },
-  ]);
 
-  const categories = [
-    "Technology",
-    "Education",
-    "Business",
-    "Health",
-    "Entertainment",
-    "News",
-  ];
+  const quillTimeoutRef = useRef(null); // Fix debounce issue
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
-  };
+  useEffect(() => {
+    if (!window.cloudinary) {
+      const script = document.createElement("script");
+      script.src = "https://widget.cloudinary.com/v2.0/global/all.js";
+      script.async = true;
+      script.onload = () => console.log("Cloudinary script loaded");
+      document.body.appendChild(script);
+    }
+  }, []);
+
 
   const handleQuillChange = (value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      content: value,
-    }));
+    if (quillTimeoutRef.current) {
+      clearTimeout(quillTimeoutRef.current);
+    }
+    quillTimeoutRef.current = setTimeout(() => {
+      setFormData((prevData) => ({
+        ...prevData,
+        description: value,
+      }));
+    }, 500);
   };
 
-  const handleVideoChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      video: file,
-    }));
+  const openCloudinaryWidget = (type) => {
+    if (window.cloudinary) {
+      window.cloudinary
+        .createUploadWidget(
+          {
+            cloudName: "frbjijb",
+            uploadPreset: "ncny6y3n",
+            sources: ["local"],
+            multiple: false,
+          },
+          (error, result) => {
+            if (!error && result && result.event === "success") {
+              setFormData((prevData) => ({
+                ...prevData,
+                [type]: result.info.secure_url,
+              }));
+            }
+          }
+        )
+        .open();
+    }
   };
 
-  const handleSubmit = () => {
-    if (!formData.title || !formData.content || !formData.category || !formData.publishDate) {
+  const handleSubmit = async() => {
+    if (
+      !formData.title||
+      !formData.description ||
+      !formData.author
+    ) {
+      console.log(formData)
       alert("Please fill out all required fields.");
       return;
     }
+    console.log(formData);
 
-    // Add new podcast to the list
-    setPodcasts((prevPodcasts) => [
-      ...prevPodcasts,
-      {
-        title: formData.title,
-        category: formData.category,
-        publishDate: formData.publishDate,
-        video: formData.video ? formData.video.name : "No video uploaded",
-      },
-    ]);
+    try {
+      await axios.post('http://localhost:3001/api/podcast/createpodcast',formData)
+      alert('Success')
+    } catch (error) {
+      alert("Error")
+    }
+   
 
-    console.log("Podcast Submitted: ", formData);
-    // Reset the form
     setFormData({
       title: "",
-      content: "",
-      category: "",
-      video: null,
-      publishDate: new Date().toISOString().slice(0, 16),
+      description: "",
+      author: "",
+      thumbnail: "",
+      videoUrl: "",
     });
-  };
-
-  const handleEdit = (index) => {
-    const podcastToEdit = podcasts[index];
-    setFormData({
-      title: podcastToEdit.title,
-      content: podcastToEdit.content,
-      category: podcastToEdit.category,
-      video: podcastToEdit.video,
-      publishDate: podcastToEdit.publishDate,
-    });
-    setPodcasts((prevPodcasts) => prevPodcasts.filter((_, i) => i !== index)); // Remove the edited podcast
-  };
-
-  const handleDelete = (index) => {
-    setPodcasts((prevPodcasts) => prevPodcasts.filter((_, i) => i !== index));
   };
 
   return (
-    <>
-      <TitleCard title="Podcast Form">
-        <div className="space-y-4">
-          {/* Title Input */}
-          <InputText
-            labelTitle="Podcast Title"
-            placeholder="Enter podcast title"
-            name="title"
-            value={formData.title}
-            updateFormValue={handleInputChange}
+    <TitleCard title="Podcast Form">
+      <div className="space-y-4">
+        <input
+          className="input  input-bordered w-full"
+          labelTitle="Podcast Title"
+          placeholder="Enter title"
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+        />
+        <input
+          className="input  input-bordered w-full"
+          labelTitle="Podcast Author"
+          placeholder="Enter Author name"
+          name="author"
+          onChange={(e) =>
+            setFormData({ ...formData, author: e.target.value })
+          }
+        />
+        <div>
+          <label className="block text-sm font-medium mb-1">Thumbnail</label>
+          <button
+            className="btn btn-secondary"
+            onClick={() => openCloudinaryWidget("thumbnail")}
+          >
+            Upload Thumbnail
+          </button>
+          {formData.thumbnail && (
+            <img
+              src={formData.thumbnail}
+              alt="Thumbnail"
+              className="mt-2 w-32 h-32 object-cover"
+            />
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Upload Video</label>
+          <button
+            className="btn btn-secondary"
+            onClick={() => openCloudinaryWidget("videoUrl")}
+          >
+            Upload Video
+          </button>
+          {formData.videoUrl && (
+            <p className="mt-2 text-sm text-gray-500">Video Uploaded</p>
+          )}
+        </div>
+        <div>
+          <ReactQuill
+            value={formData.description}
+            onChange={handleQuillChange}
+            theme="snow"
+            className="h-40"
           />
-
-          {/* Video Upload */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Upload Video</label>
-            <input
-              type="file"
-              accept="video/*"
-              className="file-input file-input-bordered w-full"
-              onChange={handleVideoChange}
-            />
-          </div>
-
-          {/* Content Editor */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Podcast Content</label>
-            <div className="h-[400px] relative">
-              <ReactQuill
-                value={formData.content}
-                onChange={handleQuillChange}
-                theme="snow"
-                className="h-full"
-                modules={{
-                  toolbar: [
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ color: [] }, { background: [] }],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    [{ align: [] }],
-                    [{ indent: '-1' }, { indent: '+1' }],
-                    ['blockquote', 'code-block'],
-                    [{ script: 'sub' }, { script: 'super' }],
-                    [{ direction: 'rtl' }],
-                    ['link', 'image', 'video'],
-                    ['clean'],
-                  ],
-                  clipboard: {
-                    matchVisual: false,
-                  },
-                }}
-                formats={[
-                  'header',
-                  'bold', 'italic', 'underline', 'strike',
-                  'color', 'background',
-                  'list', 'bullet',
-                  'align', 'indent',
-                  'blockquote', 'code-block',
-                  'script',
-                  'direction',
-                  'link', 'image', 'video',
-                ]}
-              />
-            </div>
-          </div>
-
-          {/* Category Dropdown */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Category</label>
-            <select
-              className="select select-bordered w-full"
-              name="category"
-              value={formData.category}
-              onChange={handleInputChange}
-            >
-              <option value="">Select Category</option>
-              {categories.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Publish Date */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Publish Date</label>
-            <input
-              type="datetime-local"
-              className="input input-bordered w-full"
-              name="publishDate"
-              value={formData.publishDate}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          {/* Submit Button */}
-          <div className="flex justify-end">
-            <button
-              className="btn btn-sm btn-primary mt-4"
-              onClick={handleSubmit}
-            >
-              Submit
-            </button>
-          </div>
         </div>
-      </TitleCard>
-
-      {/* Podcasts Table */}
-      <TitleCard title="Podcasts List">
-        <div className="overflow-x-auto">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Publish Date</th>
-                <th>Video</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {podcasts.map((podcast, index) => (
-                <tr key={index}>
-                  <td>{podcast.title}</td>
-                  <td>{podcast.category}</td>
-                  <td>{new Date(podcast.publishDate).toLocaleString()}</td>
-                  <td>{podcast.video}</td>
-                  <td>
-                    <button
-                      onClick={() => handleEdit(index)}
-                      className="btn btn-sm btn-warning mr-2"
-                    >
-                      <FaEdit />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(index)}
-                      className="btn btn-sm btn-danger"
-                    >
-                      <FaTrash />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="flex justify-end pt-10 ">
+          <button className="btn btn-primary mt-4" onClick={handleSubmit}>
+            Submit
+          </button>
         </div>
-      </TitleCard>
-    </>
+      </div>
+    </TitleCard>
   );
 }
 

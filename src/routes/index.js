@@ -35,6 +35,9 @@ const BlogsList = lazy(() => import('../pages/protected/BlogsList'))
 const BreakingNews = lazy(() => import('../pages/protected/BreakingNews'))
 const PodcastManagement = lazy(() => import('../pages/protected/Podcast'))
 const PodcastsList = lazy(() => import('../pages/protected/PodcastsList'))
+const EditBlog = lazy(() => import('../pages/protected/EditBlog'))
+const EditBreakingNews = lazy(() => import('../pages/protected/EditBreakingNews'))
+const EditPodcast = lazy(() => import('../pages/protected/EditPodcast'))
 
 const routes = [
   {
@@ -165,6 +168,18 @@ const routes = [
   {
     path: '/podcasts-list',
     component: PodcastsList,
+  },
+  {
+    path: '/blogs/edit/:id',
+    component: EditBlog,
+  },
+  {
+    path: '/breaking-news/edit/:id',
+    component: EditBreakingNews,
+  },
+  {
+    path: '/podcasts/edit/:id',
+    component: EditPodcast,
   },
 ]
 

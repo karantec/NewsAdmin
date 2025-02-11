@@ -20,31 +20,27 @@ apiClient.interceptors.response.use(
     }
 );
 
+const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Authentication required');
+    return token;
+};
+
 // Authentication APIs
 export const loginUser = async (email, password) => {
     try {
         const response = await apiClient.post("super-admin/auth/login", { email, password });
-
-        // Check if login was successful
-        if (response.status === 200 && response.data.status) {
-            // Save the token and other user info to localStorage (or state if needed)
-            const { _token, name, email, roles } = response.data.data;
-            const token = _token;
-            localStorage.setItem("userName", name);  // Save token
-            localStorage.setItem("token", token); // Optionally store other data
-            localStorage.setItem("userEmail", email);
+        if (response?.data?.data) {
+            const { _token, name, email: userEmail, roles } = response.data.data;
+            localStorage.setItem("userName", name);
+            localStorage.setItem("token", _token);
+            localStorage.setItem("userEmail", userEmail); // Changed from email to userEmail to avoid duplicate declaration
             localStorage.setItem("userRoles", JSON.stringify(roles));
-
             return { status: true, message: response.data.message };
-        } else {
-            return { status: false, message: response.data.message || "Login failed" };
         }
+        return { status: false, message: response.data.message || "Login failed" };
     } catch (error) {
-        // Handle any errors that occur during the API request
-        return {
-            status: false,
-            message: error?.response?.data?.message || "Something went wrong",
-        };
+        return { status: false, message: error?.response?.data?.message || "Something went wrong" };
     }
 };
 
@@ -69,147 +65,147 @@ export const fetchPrivacyPolicy = async () => {
     return response.data; // Assuming the API returns an object with privacy policy content
 };
 
+// Add error handling for API calls
+const handleApiError = (error) => {
+    console.error('API Error:', error);
+    throw new Error(error?.response?.data?.message || "Something went wrong");
+};
+
 // Blog APIs
 export const fetchAllBlogs = async () => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.get("blogs", {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.get("api/blog/blogs");
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const fetchBlogById = async (blogId) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.get(`blogs/${blogId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
+    try {
+        const response = await apiClient.get(`api/blog/blogs/${blogId}`);
+        if (response?.data?.message) {
+            return { data: response.data.message };
         }
-    });
-    return response.data;
+        throw new Error('Invalid response format');
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const createBlog = async (blogData) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.post('createblogs', blogData, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+    const response = await apiClient.post('api/blog/createblogs', blogData);
     return response.data;
 };
 
 export const updateBlog = async (blogId, blogData) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.put(`update/blogs/${blogId}`, blogData, {
-        headers: {
-            Authorization: `Bearer ${token}`
+    try {
+        const response = await apiClient.patch(`api/blog/update/blog/${blogId}`, blogData);
+        if (!response.data) {
+            throw new Error('No response data received');
         }
-    });
-    return response.data;
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to update blog');
+    }
 };
 
 export const deleteBlog = async (blogId) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.delete(`blogs/${blogId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.delete(`api/blog/delete/${blogId}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to delete blog');
+    }
 };
 
 // Breaking News APIs
 export const createBreakingNews = async (newsData) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.post('createbreakingnews', newsData, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.post('/api/breakingnews/createbreakingnews', newsData);
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to create breaking news');
+    }
 };
 
 export const getBreakingNews = async () => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.get('getbreakingnews', {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.get('/api/breakingnews/getbreakingnews');
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to fetch breaking news');
+    }
 };
 
+// Add these missing functions
 export const updateBreakingNews = async (newsId, newsData) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.put(`updatedbreakingnews/${newsId}`, newsData, {
-        headers: {
-            Authorization: `Bearer ${token}`
+    try {
+        const response = await apiClient.patch(`/api/breakingnews/update/${newsId}`, newsData);
+        if (!response.data) {
+            throw new Error('No response data received');
         }
-    });
-    return response.data;
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to update breaking news');
+    }
 };
 
 export const deleteBreakingNews = async (newsId) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.delete(`deletebreakingnews/${newsId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.delete(`/api/breakingnews/delete/${newsId}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to delete breaking news');
+    }
 };
 
 // Podcast APIs
 export const createPodcast = async (podcastData) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.post('createpodcast', podcastData, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
+    const response = await apiClient.post('/api/podcast/createpodcast', podcastData);
     return response.data;
 };
 
 export const getAllPodcasts = async () => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.get('getallpodcast', {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.get('/api/podcast/getallpodcast');
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to fetch podcasts');
+    }
 };
 
 export const getPodcastById = async (podcastId) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.get(`podcast/${podcastId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
+    try {
+        const response = await apiClient.get(`api/podcast/podcast/${podcastId}`);
+        if (response?.data?.message) {
+            return { data: response.data.message };
         }
-    });
-    return response.data;
+        throw new Error('Invalid podcast data format');
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to fetch podcast');
+    }
 };
 
 export const updatePodcast = async (podcastId, podcastData) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.patch(`updatepodcast/${podcastId}`, podcastData, {
-        headers: {
-            Authorization: `Bearer ${token}`
+    try {
+        const response = await apiClient.patch(`api/podcast/update/${podcastId}`, podcastData);
+        if (!response.data) {
+            throw new Error('No response data received');
         }
-    });
-    return response.data;
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to update podcast');
+    }
 };
 
 export const deletePodcast = async (podcastId) => {
-    const token = localStorage.getItem('token');
-    const response = await apiClient.delete(`deletepodcast/${podcastId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    return response.data;
+    try {
+        const response = await apiClient.delete(`api/podcast/podcast/${podcastId}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(error?.response?.data?.message || 'Failed to delete podcast');
+    }
 };
 
 // Export the Axios instance for general use

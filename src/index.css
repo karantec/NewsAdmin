@@ -3,39 +3,43 @@
 @tailwind utilities;
 
 .loading-indicator:before {
-    content: '';
-    background: #00000080;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-  }
-  
-  .ql-container {
-    @apply h-[calc(100%-42px)] !important; /* 42px accounts for toolbar height */
-  }
-  
-  .ql-editor {
-    @apply h-full !important;
-    @apply min-h-[200px] !important;
-    @apply overflow-y-auto !important;
-  }
-  .loading-indicator:after {
-    content: ' ';
-    position: fixed;
-    top: 40%;
-    left: 45%;
-    z-index: 10010;
-    color:white;
-    text-align:center;
-    font-weight:bold;
-    font-size:1.2rem;        
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #0474bf; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
+  content: '';
+  background: #00000080;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.ql-container {
+  @apply h-[calc(100%-42px)] !important;
+  /* 42px accounts for toolbar height */
+}
+
+.ql-editor {
+  @apply h-full !important;
+  @apply min-h-[200px] !important;
+  @apply overflow-y-auto !important;
+}
+
+.loading-indicator:after {
+  content: ' ';
+  position: fixed;
+  top: 40%;
+  left: 45%;
+  z-index: 10010;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #0474bf;
+  /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
 }

@@ -31,34 +31,54 @@ const routes = [
 
   {
     path: '/app/dashboard',
-    icon: <Squares2X2Icon className={iconClasses}/>, 
+    icon: <Squares2X2Icon className={iconClasses} />,
     name: 'Dashboard',
   },
-  
-  
+
+
   {
     path: '/app/RequestDemo', // url
-    icon: <VscGitPullRequestNewChanges className={iconClasses}/>, // icon component
+    icon: <VscGitPullRequestNewChanges className={iconClasses} />, // icon component
     name: 'Post News', // name that appear in Sidebar
   },
   {
     path: '/app/BookDemo', // url
-    icon: <FaBookBookmark className={iconClasses}/>, // icon component
+    icon: <FaBookBookmark className={iconClasses} />, // icon component
     name: 'BlogPost', // name that appear in Sidebar
   },
   {
     path: '/app/Feedback', // url
-    icon: <VscFeedback className={iconClasses}/>, // icon component
+    icon: <VscFeedback className={iconClasses} />, // icon component
     name: 'PodCast', // name that appear in Sidebar
   },
   {
+    path: '/app/podcasts',
+    icon: <VscFeedback className={iconClasses} />,
+    name: 'Podcasts',
+  },
+  {
+    path: '/app/podcasts-list',
+    icon: <DocumentTextIcon className={iconClasses} />,
+    name: 'All Podcasts',
+  },
+  {
     path: '/app/welcome', //url
-    icon: <UserIcon className={submenuIconClasses}/>, // icon component
+    icon: <UserIcon className={submenuIconClasses} />, // icon component
     name: 'Welcome', // name that appear in Sidebar
   },
-      
+  {
+    path: '/app/blogs',
+    icon: <DocumentTextIcon className={iconClasses} />,
+    name: 'All Blogs',
+  },
+  {
+    path: '/app/breaking-news',
+    icon: <BoltIcon className={iconClasses} />,
+    name: 'Breaking News',
+  },
 
-  
+
+
 
   // {
   //   path: '', //no url needed as this has submenu
@@ -76,7 +96,7 @@ const routes = [
   //       icon: <UserIcon className={submenuIconClasses}/>, // icon component
   //       name: 'Register', // name that appear in Sidebar
   //     },
-    
+
 
   //     {
   //       path: '/app/ChangePassword', //url
@@ -114,7 +134,7 @@ const routes = [
   //       name: 'Address',
   //     },
 
-     
+
   //   ]
   // },
   // {
@@ -137,7 +157,7 @@ const routes = [
   //       icon: <TbLetterMSmall className={submenuIconClasses}/>,
   //       name: 'FAQ',
   //     },
-     
+
   //   ]
   // },
   // {
@@ -162,7 +182,7 @@ const routes = [
   //     }
   //   ]
   // },
-  
+
 ]
 
 export default routes

@@ -1,7 +1,8 @@
 import axios from "axios";
 
 // Base URL for your backend API
-const BASE_URL = "http://44.211.243.116:30001/api/";
+// const BASE_URL = "http://44.211.243.116:30001/api/";
+const BASE_URL = "https://bbc-newsbackend-2yyf.onrender.com/"
 
 // Axios instance for default configurations
 const apiClient = axios.create({
@@ -31,7 +32,7 @@ export const loginUser = async (email, password) => {
             const token = _token;
             localStorage.setItem("userName", name);  // Save token
             localStorage.setItem("token", token); // Optionally store other data
-            localStorage.setItem("userEmail", email); 
+            localStorage.setItem("userEmail", email);
             localStorage.setItem("userRoles", JSON.stringify(roles));
 
             return { status: true, message: response.data.message };
@@ -66,6 +67,149 @@ export const resetPassword = async (otp, newPassword) => {
 export const fetchPrivacyPolicy = async () => {
     const response = await apiClient.get("super-admin/utility/privacy");
     return response.data; // Assuming the API returns an object with privacy policy content
+};
+
+// Blog APIs
+export const fetchAllBlogs = async () => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.get("blogs", {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const fetchBlogById = async (blogId) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.get(`blogs/${blogId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const createBlog = async (blogData) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.post('createblogs', blogData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const updateBlog = async (blogId, blogData) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.put(`update/blogs/${blogId}`, blogData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const deleteBlog = async (blogId) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.delete(`blogs/${blogId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+// Breaking News APIs
+export const createBreakingNews = async (newsData) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.post('createbreakingnews', newsData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const getBreakingNews = async () => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.get('getbreakingnews', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const updateBreakingNews = async (newsId, newsData) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.put(`updatedbreakingnews/${newsId}`, newsData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const deleteBreakingNews = async (newsId) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.delete(`deletebreakingnews/${newsId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+// Podcast APIs
+export const createPodcast = async (podcastData) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.post('createpodcast', podcastData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const getAllPodcasts = async () => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.get('getallpodcast', {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const getPodcastById = async (podcastId) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.get(`podcast/${podcastId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const updatePodcast = async (podcastId, podcastData) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.patch(`updatepodcast/${podcastId}`, podcastData, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+export const deletePodcast = async (podcastId) => {
+    const token = localStorage.getItem('token');
+    const response = await apiClient.delete(`deletepodcast/${podcastId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
 };
 
 // Export the Axios instance for general use

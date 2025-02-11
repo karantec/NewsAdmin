@@ -1,8 +1,9 @@
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import TitleCard from "../../components/Cards/TitleCard";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import axios from "axios";
+import { createBlog } from '../../app/api';  // Add this import at the top
 
 function BlogForm() {
   const [formData, setFormData] = useState({
@@ -37,15 +38,15 @@ function BlogForm() {
     }));
   };
 
-    useEffect(() => {
-      if (!window.cloudinary) {
-        const script = document.createElement("script");
-        script.src = "https://widget.cloudinary.com/v2.0/global/all.js";
-        script.async = true;
-        script.onload = () => console.log("Cloudinary script loaded");
-        document.body.appendChild(script);
-      }
-    }, []);
+  useEffect(() => {
+    if (!window.cloudinary) {
+      const script = document.createElement("script");
+      script.src = "https://widget.cloudinary.com/v2.0/global/all.js";
+      script.async = true;
+      script.onload = () => console.log("Cloudinary script loaded");
+      document.body.appendChild(script);
+    }
+  }, []);
 
   const handleQuillChange = (value) => {
     setFormData((prevData) => ({
@@ -96,33 +97,27 @@ function BlogForm() {
     );
   };
 
-  const handleSubmit = async() => {
-    if (
-      !formData.title ||
-      !formData.content ||
-      !formData.category
-    ) {
+  const handleSubmit = async () => {
+    if (!formData.title || !formData.content || !formData.category) {
       alert("कृपया सभी आवश्यक फ़ील्ड भरें।");
       return;
     }
 
     try {
-      await axios.post("http://localhost:3001/api/blog/createblogs",formData)
-      alert('Posted')
+      await createBlog(formData);
+      alert('Posted successfully');
+      // Reset form after submission
+      setFormData({
+        title: "",
+        content: "",
+        category: "",
+        thumbnailUrl: "",
+        BlogImages: [],
+        author: "",
+      });
     } catch (error) {
-      alert('Server Error')
+      alert('Server Error: ' + (error.message || 'Unknown error occurred'));
     }
-    console.log("Blog Data Submitted:", formData);
-
-    // Reset form after submission
-    setFormData({
-      title: "",
-      content: "",
-      category: "",
-      thumbnailUrl: "",
-      BlogImages: [],
-      publishDate: new Date().toISOString().slice(0, 16),
-    });
   };
 
   return (

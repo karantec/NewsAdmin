@@ -9,9 +9,11 @@ function RequestDemo() {
   const [formData, setFormData] = useState({
     title: "",
     image: null,
+    video: null,
     content: "",
     postedTime: new Date().toISOString().slice(0, 16), // Default current date-time
     category: "",
+    state: "", // For state-specific news
   });
 
   const categories = [
@@ -28,6 +30,21 @@ function RequestDemo() {
     "अंतर्राष्ट्रीय",
   ];
 
+  const states = [
+    "उत्तर प्रदेश",
+    "मध्य प्रदेश",
+    "बिहार",
+    "राजस्थान",
+    "महाराष्ट्र",
+    "पंजाब",
+    "हरियाणा",
+    "गुजरात",
+    "दिल्ली",
+    "झारखंड",
+    "छत्तीसगढ़",
+    "उत्तराखंड",
+  ];
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -36,11 +53,12 @@ function RequestDemo() {
     }));
   };
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
+    const { name } = e.target;
     const file = e.target.files[0];
     setFormData((prevData) => ({
       ...prevData,
-      image: file,
+      [name]: file,
     }));
   };
 
@@ -52,7 +70,6 @@ function RequestDemo() {
   };
 
   const handleSubmit = () => {
-    // Basic validation
     if (
       !formData.title ||
       !formData.image ||
@@ -60,7 +77,7 @@ function RequestDemo() {
       !formData.postedTime ||
       !formData.category
     ) {
-      alert("Please fill out all required fields.");
+      alert("कृपया सभी आवश्यक फ़ील्ड भरें।");
       return;
     }
 
@@ -69,15 +86,15 @@ function RequestDemo() {
   };
 
   const dummyNews = [
-    { id: 1, title: "Breaking News 1", category: "राजनीति", postedTime: "2025-01-01T12:00" },
-    { id: 2, title: "Breaking News 2", category: "स्वास्थ्य", postedTime: "2025-01-02T12:00" },
-    { id: 3, title: "Breaking News 3", category: "खेल", postedTime: "2025-01-03T12:00" },
+    { id: 1, title: "Breaking News 1", category: "राजनीति", state: "उत्तर प्रदेश", postedTime: "2025-01-01T12:00" },
+    { id: 2, title: "Breaking News 2", category: "स्वास्थ्य", state: "बिहार", postedTime: "2025-01-02T12:00" },
+    { id: 3, title: "Breaking News 3", category: "खेल", state: "महाराष्ट्र", postedTime: "2025-01-03T12:00" },
   ];
 
   const [newsEntries, setNewsEntries] = useState(dummyNews);
 
   const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this news entry?')) {
+    if (window.confirm('क्या आप वाकई इस समाचार को हटाना चाहते हैं?')) {
       setNewsEntries(newsEntries.filter(entry => entry.id !== id));
     }
   };
@@ -86,18 +103,19 @@ function RequestDemo() {
     setFormData({
       ...news,
       image: null, // Reset image since we can't restore File object
+      video: null, // Reset video
     });
   };
 
   return (
     <>
-      <TitleCard title="Post News">
+      <TitleCard title="पोस्ट न्यूज़ (Post News)">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Title Input */}
           <div>
             <InputText
-              labelTitle="News Title"
-              placeholder="Enter news title"
+              labelTitle="न्यूज़ का शीर्षक"
+              placeholder="यहाँ समाचार का शीर्षक डालें"
               name="title"
               value={formData.title}
               updateFormValue={handleInputChange}
@@ -106,69 +124,44 @@ function RequestDemo() {
 
           {/* Image Upload */}
           <div>
-            <label className="block text-sm font-medium mb-1">Upload Image</label>
+            <label className="block text-sm font-medium mb-1">छवि अपलोड करें</label>
             <input
               type="file"
               accept="image/*"
+              name="image"
               className="file-input file-input-bordered w-full"
-              onChange={handleImageChange}
+              onChange={handleFileChange}
+            />
+          </div>
+
+          {/* Video Upload */}
+          <div>
+            <label className="block text-sm font-medium mb-1">वीडियो अपलोड करें</label>
+            <input
+              type="file"
+              accept="video/*"
+              name="video"
+              className="file-input file-input-bordered w-full"
+              onChange={handleFileChange}
             />
           </div>
 
           {/* Content Textarea - Quill Editor */}
           <div className="col-span-2">
-            <label className="block text-sm font-medium mb-1">Content</label>
+            <label className="block text-sm font-medium mb-1">समाचार की सामग्री</label>
             <div className="h-[400px] relative">
               <ReactQuill
                 value={formData.content}
                 onChange={handleQuillChange}
                 theme="snow"
                 className="h-full"
-                modules={{
-                  toolbar: [
-                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                    ["bold", "italic", "underline", "strike"], // text styling
-                    [{ color: [] }, { background: [] }], // dropdown with defaults
-                    [{ list: "ordered" }, { list: "bullet" }], // lists
-                    [{ align: [] }], // text align
-                    [{ indent: "-1" }, { indent: "+1" }], // outdent/indent
-                    ["blockquote", "code-block"], // blocks
-                    [{ script: "sub" }, { script: "super" }], // superscript/subscript
-                    [{ direction: "rtl" }], // text direction
-                    ["link", "image", "video"], // links, media
-                    ["clean"], // remove formatting
-                  ],
-                  clipboard: {
-                    matchVisual: false,
-                  },
-                }}
-                formats={[
-                  "header",
-                  "bold",
-                  "italic",
-                  "underline",
-                  "strike",
-                  "color",
-                  "background",
-                  "list",
-                  "bullet",
-                  "align",
-                  "indent",
-                  "blockquote",
-                  "code-block",
-                  "script",
-                  "direction",
-                  "link",
-                  "image",
-                  "video",
-                ]}
               />
             </div>
           </div>
 
           {/* Posted Time */}
           <div>
-            <label className="block text-sm font-medium mb-1">Posted Time</label>
+            <label className="block text-sm font-medium mb-1">प्रकाशन समय</label>
             <input
               type="datetime-local"
               className="input input-bordered w-full"
@@ -180,14 +173,14 @@ function RequestDemo() {
 
           {/* Category Dropdown */}
           <div>
-            <label className="block text-sm font-medium mb-1">Category</label>
+            <label className="block text-sm font-medium mb-1">श्रेणी</label>
             <select
               className="select select-bordered w-full"
               name="category"
               value={formData.category}
               onChange={handleInputChange}
             >
-              <option value="">Select Category</option>
+              <option value="">श्रेणी चुनें</option>
               {categories.map((category, index) => (
                 <option key={index} value={category}>
                   {category}
@@ -196,13 +189,33 @@ function RequestDemo() {
             </select>
           </div>
 
+          {/* State Dropdown (Visible only if category is "राज्य") */}
+          {formData.category === "राज्य" && (
+            <div>
+              <label className="block text-sm font-medium mb-1">राज्य</label>
+              <select
+                className="select select-bordered w-full"
+                name="state"
+                value={formData.state}
+                onChange={handleInputChange}
+              >
+                <option value="">राज्य चुनें</option>
+                {states.map((state, index) => (
+                  <option key={index} value={state}>
+                    {state}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Submit Button */}
           <div className="flex justify-end col-span-2">
             <button
               className="btn btn-sm btn-primary mt-4"
               onClick={handleSubmit}
             >
-              Submit
+              सबमिट करें
             </button>
           </div>
         </div>

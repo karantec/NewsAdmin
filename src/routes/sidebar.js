@@ -42,15 +42,20 @@ const routes = [
     name: 'Post News', // name that appear in Sidebar
   },
   {
+    path: '/app/News', // url
+    icon: <VscGitPullRequestNewChanges className={iconClasses} />, // icon component
+    name: 'View News', // name that appear in Sidebar
+  },
+  {
     path: '/app/BookDemo', // url
     icon: <FaBookBookmark className={iconClasses} />, // icon component
     name: 'BlogPost', // name that appear in Sidebar
   },
-  {
-    path: '/app/Feedback', // url
-    icon: <VscFeedback className={iconClasses} />, // icon component
-    name: 'PodCast', // name that appear in Sidebar
-  },
+  // {
+  //   path: '/app/Feedback', // url
+  //   icon: <VscFeedback className={iconClasses} />, // icon component
+  //   name: 'PodCast', // name that appear in Sidebar
+  // },
   {
     path: '/app/podcasts',
     icon: <VscFeedback className={iconClasses} />,
@@ -61,11 +66,7 @@ const routes = [
     icon: <DocumentTextIcon className={iconClasses} />,
     name: 'All Podcasts',
   },
-  {
-    path: '/app/welcome', //url
-    icon: <UserIcon className={submenuIconClasses} />, // icon component
-    name: 'Welcome', // name that appear in Sidebar
-  },
+
   {
     path: '/app/blogs',
     icon: <DocumentTextIcon className={iconClasses} />,

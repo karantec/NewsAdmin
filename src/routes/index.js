@@ -6,6 +6,7 @@ import FAQPage from '../features/settings/FAQ'
 import FinanceAccounting from '../features/leads copy'
 import TroubleShoot from '../features/leads copy 2'
 import CallBackRequest from '../features/leads copy 3'
+import ViewNews from '../features/leads copy'
 
 const Dashboard = lazy(() => import('../pages/protected/Dashboard'))
 const Welcome = lazy(() => import('../pages/protected/Welcome'))
@@ -57,6 +58,10 @@ const routes = [
     component: FinanceAccounting,
   },
   {
+    path: '/News',
+    component: ViewNews,
+  },
+  {
     path: '/troubleshoot',
     component: TroubleShoot,
   },
@@ -76,75 +81,75 @@ const routes = [
     path: '/Feedback',
     component: Feedback,
   },
-  {
-    path: '/settings-team',
-    component: Team,
-  },
-  {
-    path: '/calendar',
-    component: Calendar,
-  },
-  {
-    path: '/transactions',
-    component: Transactions,
-  },
-  {
-    path: '/Register',
-    component: Registration,
-  },
-  {
-    path: '/Manual',
-    component: Manual,
-  },
-  {
-    path: '/EditProfile',
-    component: EditProfile,
-  },
-  {
-    path: '/ChangePassword',
-    component: ChangePassword,
-  },
+  // {
+  //   path: '/settings-team',
+  //   component: Team,
+  // },
+  // {
+  //   path: '/calendar',
+  //   component: Calendar,
+  // },
+  // {
+  //   path: '/transactions',
+  //   component: Transactions,
+  // },
+  // {
+  //   path: '/Register',
+  //   component: Registration,
+  // },
+  // {
+  //   path: '/Manual',
+  //   component: Manual,
+  // },
+  // {
+  //   path: '/EditProfile',
+  //   component: EditProfile,
+  // },
+  // {
+  //   path: '/ChangePassword',
+  //   component: ChangePassword,
+  // },
 
-  {
-    path: '/Address',
-    component: Address,
-  },
-  {
-    path: '/settings-billing',
-    component: Bills,
-  },
-  {
-    path: '/getting-started',
-    component: GettingStarted,
-  },
-  {
-    path: '/PrivacyPolicy',
-    component: PrivacyPolicy,
-  },
-  {
-    path: '/Faq',
-    component: FAQPage,
-  },
-  {
-    path: '/termofservice',
-    component: TermofServie,
-  },
-  {
-    path: '/features',
-    component: DocFeatures,
-  },
-  {
-    path: '/components',
-    component: DocComponents,
-  },
-  {
-    path: '/integration',
-    component: Integration,
-  },
-  {
-    path: '/charts',
-    component: Charts,
-  },
+  // {
+  //   path: '/Address',
+  //   component: Address,
+  // },
+  // {
+  //   path: '/settings-billing',
+  //   component: Bills,
+  // },
+  // {
+  //   path: '/getting-started',
+  //   component: GettingStarted,
+  // },
+  // {
+  //   path: '/PrivacyPolicy',
+  //   component: PrivacyPolicy,
+  // },
+  // {
+  //   path: '/Faq',
+  //   component: FAQPage,
+  // },
+  // {
+  //   path: '/termofservice',
+  //   component: TermofServie,
+  // },
+  // {
+  //   path: '/features',
+  //   component: DocFeatures,
+  // },
+  // {
+  //   path: '/components',
+  //   component: DocComponents,
+  // },
+  // {
+  //   path: '/integration',
+  //   component: Integration,
+  // },
+  // {
+  //   path: '/charts',
+  //   component: Charts,
+  // },
   {
     path: '/404',
     component: Page404,
